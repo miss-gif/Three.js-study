@@ -1,12 +1,31 @@
-import React from 'react';
-import { useGraph } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
+import { GroupProps, useGraph } from '@react-three/fiber';
+import React from 'react';
+import * as THREE from 'three';
+import { AnimationClip, Group, Material, Object3D } from 'three';
 import { SkeletonUtils } from 'three-stdlib';
 
-export function Model(props: any) {
-  const { scene } = useGLTF('/avata.glb');
+interface ModelAniProps extends GroupProps {
+  customProp?: string; // 필요시 사용자 정의 속성 추가
+}
+
+// GLTF 데이터 구조를 커스터마이즈한 타입 정의
+interface GLTFResult {
+  scene: Group; // GLTF의 전체 씬
+  animations: AnimationClip[]; // 애니메이션 데이터
+  nodes: { [key: string]: Object3D }; // GLTF에 포함된 노드들
+  materials: { [key: string]: Material }; // GLTF에 포함된 재질
+}
+
+export function Model(props: ModelAniProps) {
+  const { scene } = useGLTF('/avata.glb') as GLTFResult;
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene]);
-  const { nodes, materials } = useGraph(clone);
+  // useGraph를 사용하여 노드와 재질 데이터 추출
+  const { nodes, materials } = useGraph(clone) as {
+    nodes: Record<string, THREE.SkinnedMesh>;
+    materials: Record<string, THREE.Material>;
+  };
+
   return (
     <group {...props} dispose={null}>
       <primitive object={nodes.Hips} />

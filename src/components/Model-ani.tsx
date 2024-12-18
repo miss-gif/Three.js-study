@@ -4,9 +4,10 @@ import React, { useEffect } from 'react';
 import * as THREE from 'three';
 import { AnimationClip, Group, Material, Object3D } from 'three';
 import { SkeletonUtils } from 'three-stdlib';
+import { GroupProps } from '@react-three/fiber';
 
-interface ModelAniProps {
-  [key: string]: string | number;
+interface ModelAniProps extends GroupProps {
+  customProp?: string; // 필요시 사용자 정의 속성 추가
 }
 
 // GLTF 데이터 구조를 커스터마이즈한 타입 정의
